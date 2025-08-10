@@ -2,6 +2,7 @@ import { executeCommandSafe, executeCmdCommand, executePowerShellScript } from '
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as os from 'os';
+import { defaultServicesData } from '../data/defaultServices';
 
 export interface OptimizationOption {
   id: string;
@@ -1086,86 +1087,28 @@ export class WindowsOptimizationService {
         services.push(currentService);
       }
       
-      // Add Vietnamese names and descriptions for common services
-      const vietnameseNames: Record<string, string> = {
-        'wuauserv': 'Windows Update',
-        'WinDefend': 'Windows Defender',
-        'spooler': 'Print Spooler',
-        'themes': 'Themes',
-        'AudioSrv': 'Windows Audio',
-        'BITS': 'Background Intelligent Transfer Service',
-        'CryptSvc': 'Cryptographic Services',
-        'DcomLaunch': 'DCOM Server Process Launcher',
-        'Dhcp': 'DHCP Client',
-        'Dnscache': 'DNS Client',
-        'EventLog': 'Windows Event Log',
-        'lanmanserver': 'Server',
-        'lanmanworkstation': 'Workstation',
-        'netlogon': 'Net Logon',
-        'nsi': 'Network Store Interface Service',
-        'PlugPlay': 'Plug and Play',
-        'RpcEptMapper': 'RPC Endpoint Mapper',
-        'RpcSs': 'Remote Procedure Call',
-        'SamSs': 'Security Accounts Manager',
-        'Schedule': 'Task Scheduler',
-        'seclogon': 'Secondary Logon',
-        'SENS': 'System Event Notification Service',
-        'ShellHWDetection': 'Shell Hardware Detection',
-        'Spooler': 'Print Spooler',
-        'Themes': 'Themes',
-        'TrkWks': 'Distributed Link Tracking Client',
-        'W32Time': 'Windows Time',
-        'WSearch': 'Windows Search',
-        'WudfSvc': 'Windows Driver Foundation - User-mode Driver Framework'
-      };
-      
-      const vietnameseDescriptions: Record<string, string> = {
-        'wuauserv': 'Tự động tải và cài đặt các bản cập nhật Windows',
-        'WinDefend': 'Bảo vệ máy tính khỏi virus và phần mềm độc hại',
-        'spooler': 'Quản lý việc in ấn và tài liệu',
-        'themes': 'Quản lý giao diện và chủ đề Windows',
-        'AudioSrv': 'Quản lý âm thanh và audio devices',
-        'BITS': 'Tải file trong nền với khả năng tạm dừng và tiếp tục',
-        'CryptSvc': 'Quản lý chứng chỉ và mã hóa',
-        'DcomLaunch': 'Khởi động các dịch vụ COM và DCOM',
-        'Dhcp': 'Tự động cấu hình địa chỉ IP',
-        'Dnscache': 'Cache DNS để tăng tốc độ truy cập web',
-        'EventLog': 'Ghi lại các sự kiện hệ thống',
-        'lanmanserver': 'Chia sẻ file và máy in qua mạng',
-        'lanmanworkstation': 'Kết nối đến các tài nguyên mạng',
-        'netlogon': 'Xác thực đăng nhập domain',
-        'nsi': 'Quản lý thông tin mạng',
-        'PlugPlay': 'Phát hiện và cài đặt thiết bị mới',
-        'RpcEptMapper': 'Map các endpoint RPC',
-        'RpcSs': 'Cho phép các ứng dụng giao tiếp qua mạng',
-        'SamSs': 'Quản lý tài khoản người dùng và bảo mật',
-        'Schedule': 'Chạy các tác vụ theo lịch trình',
-        'seclogon': 'Cho phép chạy ứng dụng với quyền khác',
-        'SENS': 'Thông báo các sự kiện hệ thống',
-        'ShellHWDetection': 'Phát hiện thay đổi phần cứng',
-        'Spooler': 'Quản lý hàng đợi in ấn',
-        'Themes': 'Quản lý giao diện và chủ đề',
-        'TrkWks': 'Theo dõi các file được chia sẻ qua mạng',
-        'W32Time': 'Đồng bộ thời gian với server',
-        'WSearch': 'Tìm kiếm file và email',
-        'WudfSvc': 'Hỗ trợ driver người dùng'
-      };
-      
-      // List of services that are safe to disable
-      const safeToDisableServices = [
-        'wuauserv', 'WSearch', 'Themes', 'Spooler', 'BITS', 'W32Time',
-        'TrkWks', 'WudfSvc', 'ShellHWDetection', 'SENS', 'seclogon',
-        'Schedule', 'SamSs', 'RpcSs', 'RpcEptMapper', 'PlugPlay',
-        'nsi', 'netlogon', 'lanmanworkstation', 'lanmanserver',
-        'EventLog', 'Dnscache', 'Dhcp', 'DcomLaunch', 'CryptSvc',
-        'AudioSrv'
-      ];
-      
-      // Add Vietnamese names and descriptions
+      // Ánh xạ tiếng Việt từ defaultServicesData (bao phủ đầy đủ)
+      const viMap = new Map<string, any>();
+      try {
+        for (const s of defaultServicesData.services) {
+          viMap.set((s.Name || '').toLowerCase(), s);
+        }
+      } catch {}
+
       services.forEach(service => {
-        service.VietnameseName = vietnameseNames[service.Name] || service.DisplayName;
-        service.VietnameseDescription = vietnameseDescriptions[service.Name] || service.Description || 'Dịch vụ hệ thống Windows';
-        service.SafeToDisable = safeToDisableServices.includes(service.Name);
+        const vi = viMap.get((service.Name || '').toLowerCase());
+        if (vi) {
+          service.VietnameseName = vi.VietnameseName || service.DisplayName;
+          service.VietnameseDescription = vi.VietnameseDescription || service.Description || 'Dịch vụ hệ thống Windows';
+          service.Category = vi.Category || service.Category;
+          service.Impact = vi.Impact || service.Impact;
+          service.SafeToDisable = typeof vi.SafeToDisable === 'boolean' ? vi.SafeToDisable : !!service.SafeToDisable;
+        } else {
+          // Fallback an toàn
+          service.VietnameseName = service.VietnameseName || service.DisplayName;
+          service.VietnameseDescription = service.VietnameseDescription || service.Description || 'Dịch vụ hệ thống Windows';
+          if (service.SafeToDisable === undefined) service.SafeToDisable = false;
+        }
       });
       
       // Get start type for each service
