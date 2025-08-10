@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "commonjs",
+    "lib": ["ES2020", "DOM"],
+    "outDir": "./build",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": false,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": false,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "exactOptionalPropertyTypes": false,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "tsBuildInfoFile": "./build/.tsbuildinfo",
+    "typeRoots": ["./node_modules/@types", "./node_modules/systeminformation"]
+  },
+  "include": [
+    "src/dev/**/*",
+    "src/dev/types/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "build",
+    "renderer/build",
+    "src/build",
+    "renderer/build"
+  ],
+  "ts-node": {
+    "transpileOnly": true
+  }
+} 

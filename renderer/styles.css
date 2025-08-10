@@ -1,0 +1,841 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+}
+
+/* Gỡ bỏ override màu chữ toàn cục để trả về mặc định Ant Design */
+
+/* Override Ant Design default colors for dark theme */
+/* Trả về màu mặc định cho bảng */
+
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+.ant-descriptions-item-label {
+    color: #e2e8f0 !important;
+    font-weight: 600 !important;
+}
+
+.ant-descriptions-item-content {
+    color: #ffffff !important;
+}
+
+.ant-card-head-title {
+    color: #ffffff !important;
+}
+
+.ant-card-body {
+    color: #ffffff !important;
+}
+
+.ant-list-item {
+    color: #ffffff !important;
+}
+
+.ant-statistic-title {
+    color: #e2e8f0 !important;
+}
+
+.ant-statistic-content {
+    color: #ffffff !important;
+}
+
+.ant-tabs-tab {
+    color: #e2e8f0 !important;
+}
+
+.ant-tabs-tab-active {
+    color: #ffffff !important;
+}
+
+.ant-select-selection-item {
+    color: #ffffff !important;
+}
+
+/* ... giữ mặc định AntD */
+
+.ant-select-item {
+    color: #ffffff !important;
+}
+
+.ant-select-item-option-selected {
+    background: rgba(59, 130, 246, 0.3) !important;
+}
+
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+/* App Container */
+.app-container { display: flex; height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+    width: 280px;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+    border-right: 1px solid #2a2a2a;
+}
+
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #2a2a2a;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.logo i {
+    font-size: 24px;
+    color: #3b82f6;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 20px 0;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    color: #ffffff;
+}
+
+.nav-item:hover {
+    background: rgba(59, 130, 246, 0.1);
+    border-left-color: #3b82f6;
+}
+
+.nav-item.active {
+    background: rgba(59, 130, 246, 0.2);
+    border-left-color: #3b82f6;
+}
+
+.nav-item i {
+    width: 20px;
+    text-align: center;
+    color: #3b82f6;
+}
+
+/* Main Content */
+.main-content { flex: 1; display: flex; flex-direction: column; }
+
+/* Header */
+.header { display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; }
+
+.header-left h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Responsive Sidebar */
+.ant-layout-sider {
+    transition: all 0.2s ease !important;
+}
+
+.ant-layout-sider-collapsed {
+    width: 80px !important;
+}
+
+.ant-layout-sider-collapsed .ant-menu-item {
+    padding: 0 24px !important;
+    text-align: center;
+}
+
+.ant-layout-sider-collapsed .ant-menu-item-icon {
+    margin-right: 0 !important;
+    font-size: 16px;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .ant-layout-sider {
+        position: fixed !important;
+        height: 100vh !important;
+        z-index: 1000 !important;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease !important;
+    }
+    
+    .ant-layout-sider-collapsed {
+        transform: translateX(0) !important;
+    }
+    
+    .ant-layout-content {
+        margin-left: 0 !important;
+        padding: 16px !important;
+    }
+    
+    .ant-layout-header {
+        padding: 0 16px !important;
+        height: 56px !important;
+    }
+    
+    .header-title {
+        font-size: 14px !important;
+    }
+    
+    .mobile-menu-toggle {
+        display: block !important;
+    }
+    
+    .desktop-menu-toggle {
+        display: none !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    .ant-layout-sider {
+        width: 80px !important;
+    }
+    
+    .ant-layout-sider-collapsed {
+        width: 80px !important;
+    }
+    
+    .ant-layout-content {
+        margin-left: 80px !important;
+    }
+}
+
+/* Tablet Optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .ant-layout-sider {
+        width: 80px !important;
+    }
+    
+    .ant-layout-content {
+        margin-left: 80px !important;
+    }
+    
+    .header-title {
+        font-size: 16px !important;
+    }
+}
+
+/* Desktop Optimizations */
+@media (min-width: 1025px) {
+    .ant-layout-sider {
+        width: 250px !important;
+    }
+    
+    .ant-layout-sider-collapsed {
+        width: 80px !important;
+    }
+    
+    .ant-layout-content {
+        margin-left: 250px !important;
+    }
+    
+    .ant-layout-content.collapsed {
+        margin-left: 80px !important;
+    }
+}
+
+/* Sidebar Header Responsive */
+.sidebar-header {
+    padding: 16px;
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar-header.collapsed {
+    padding: 16px 8px;
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.sidebar-logo.collapsed {
+    flex-direction: column;
+    gap: 4px;
+}
+
+.sidebar-logo-icon {
+    font-size: 24px;
+    color: #1890ff;
+}
+
+.sidebar-logo-text {
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    line-height: 1.2;
+}
+
+.sidebar-logo-text.collapsed {
+    font-size: 12px;
+}
+
+/* Menu Item Responsive */
+.ant-menu-item {
+    transition: all 0.2s ease !important;
+}
+
+.ant-menu-item:hover {
+    background-color: rgba(255,255,255,0.1) !important;
+}
+
+.ant-menu-item-selected {
+    background-color: rgba(24,144,255,0.2) !important;
+    border-right: 3px solid #1890ff !important;
+}
+
+/* Content Area Responsive */
+.content-area { padding: 24px; min-height: calc(100vh - 64px); transition: margin-left 0.2s ease; }
+
+.content-area.collapsed {
+    margin-left: 80px;
+}
+
+/* Header Responsive */
+.app-header {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #2a2a2a;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    color: #ffffff;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.menu-toggle-btn {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.menu-toggle-btn:hover {
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+}
+
+.header-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.mode-indicator {
+    font-size: 12px;
+    color: #e2e8f0;
+    padding: 4px 8px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+}
+
+/* Animation for sidebar */
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+.sidebar-enter {
+    animation: slideIn 0.3s ease;
+}
+
+.sidebar-exit {
+    animation: slideOut 0.3s ease;
+}
+
+/* Overlay for mobile */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1f2937;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tab-content.active {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Status Colors */
+.status-online {
+    color: #28a745;
+}
+
+.status-offline {
+    color: #dc3545;
+}
+
+.status-warning {
+    color: #ffc107;
+}
+
+/* Progress Bars */
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #28a745 0%, #20c997 100%);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+/* Backup History */
+.backup-history {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.backup-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.backup-item:last-child {
+    border-bottom: none;
+}
+
+.backup-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.backup-name {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.backup-details {
+    font-size: 12px;
+    color: #e2e8f0;
+}
+
+/* Cleanup Stats */
+.cleanup-stats {
+    display: grid;
+    gap: 15px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-radius: 8px;
+    border: 1px solid #2a2a2a;
+}
+
+.stat-label {
+    font-weight: 500;
+    color: #e2e8f0;
+}
+
+.stat-value {
+    font-weight: 600;
+    color: #28a745;
+} 
+
+/* Enhanced Global Table and Modal Styles */
+.ant-table {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.ant-table-thead > tr > th {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border-bottom: 2px solid #2a2a2a !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.ant-table-tbody > tr > td {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: #ffffff !important;
+  border-bottom: 1px solid #2a2a2a !important;
+  font-weight: 500;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: rgba(59, 130, 246, 0.15) !important;
+  color: #ffffff !important;
+}
+
+.ant-table-tbody > tr:nth-child(even) > td {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+.ant-table-tbody > tr:nth-child(odd) > td {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+}
+
+.ant-modal-content {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.ant-modal-header {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  border-bottom: 2px solid #2a2a2a;
+  border-radius: 12px 12px 0 0;
+  padding: 16px 24px;
+}
+
+.ant-modal-title {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.ant-modal-body {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  color: #ffffff !important;
+  padding: 24px;
+}
+
+.ant-modal-footer {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-top: 2px solid #2a2a2a;
+  border-radius: 0 0 12px 12px;
+  padding: 16px 24px;
+}
+
+/* Enhanced text contrast for all components */
+.ant-typography {
+  color: #ffffff !important;
+}
+
+.ant-typography.ant-typography-secondary {
+  color: #e2e8f0 !important;
+  font-weight: 500;
+}
+
+.ant-card-head-title {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.ant-statistic-title {
+  color: #e2e8f0 !important;
+  font-weight: 600 !important;
+}
+
+.ant-statistic-content {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.ant-descriptions-item-label {
+  color: #e2e8f0 !important;
+  font-weight: 600 !important;
+}
+
+.ant-descriptions-item-content {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+/* Enhanced Card Styles */
+.ant-card {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  border: 1px solid #2a2a2a !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+.ant-card-head {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%) !important;
+  border-bottom: 2px solid #2a2a2a !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.ant-card-body {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  color: #ffffff !important;
+}
+
+/* Enhanced Button Styles */
+.ant-btn {
+  font-weight: 600 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+.ant-btn-primary {
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+.ant-btn-primary:hover {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
+}
+
+/* Enhanced Tag Styles */
+/* Ant Tag: dùng mặc định Ant Design */
+
+/* Enhanced Alert Styles */
+.ant-alert {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  border: 1px solid #2a2a2a !important;
+  color: #00ff15 !important;
+}
+
+.ant-alert-message {
+  color: #40c900 !important;
+  font-weight: 600 !important;
+}
+
+.ant-alert-description {
+  color: #88bcff !important;
+}
+
+/* High-contrast Tag presets for dark theme */
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+/* ... giữ mặc định AntD */
+
+/* Enhanced Tabs Styles */
+.ant-tabs-tab {
+  color: #e2e8f0 !important;
+  font-weight: 600 !important;
+}
+
+.ant-tabs-tab-active {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.ant-tabs-tab:hover {
+  color: #ffffff !important;
+}
+
+.ant-tabs-ink-bar {
+  background: #3b82f6 !important;
+}
+
+/* Enhanced Form Styles */
+.ant-form-item-label > label {
+  color: #e2e8f0 !important;
+  font-weight: 600 !important;
+}
+
+.ant-input {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  border: 1px solid #2a2a2a !important;
+  color: #ffffff !important;
+}
+
+.ant-input:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
+}
+
+.ant-select-selector {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  border: 1px solid #2a2a2a !important;
+  color: #ffffff !important;
+}
+
+.ant-select-selection-item {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+/* Enhanced Divider Styles */
+.ant-divider {
+  border-color: #2a2a2a !important;
+}
+
+.ant-divider-inner-text {
+  color: #e2e8f0 !important;
+  font-weight: 600 !important;
+}
+
+/* Enhanced Progress Styles */
+.ant-progress-text {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+/* Enhanced Tooltip Styles */
+.ant-tooltip-inner {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+/* Enhanced Switch Styles */
+.ant-switch {
+  background: #2a2a2a !important;
+}
+
+.ant-switch-checked {
+  background: #3b82f6 !important;
+}
+
+/* Enhanced Space Styles */
+.ant-space {
+  color: #ffffff !important;
+}
+
+/* Enhanced Row and Col Styles */
+.ant-row {
+  color: #ffffff !important;
+}
+
+.ant-col {
+  color: #ffffff !important;
+} 

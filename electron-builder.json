@@ -1,0 +1,22 @@
+{
+  "appId": "com.windows.system.manager",
+  "productName": "Windows System Manager",
+  "directories": {
+    "output": "release"
+  },
+  "files": [
+    "build/**/*",
+    "renderer/build/**/*",
+    "node_modules/**/*",
+    "app.manifest",
+    "assets/**/*"
+  ],
+  "win": {
+    "target": "portable",
+    "icon": "assets/icon/icon.ico",
+    "requestedExecutionLevel": "requireAdministrator"
+  },
+  "portable": {
+    "artifactName": "Windows System Manager.exe"
+  }
+}

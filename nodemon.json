@@ -1,0 +1,14 @@
+{
+  "watch": ["build"],
+  "ext": "js",
+  "ignore": ["build/renderer/**/*", "node_modules/**/*"],
+  "exec": "electron .",
+  "env": {
+    "NODE_ENV": "development"
+  },
+  "delay": "1000",
+  "restartDelay": "1000",
+  "verbose": true,
+  "legacyWatch": true,
+  "signal": "SIGTERM"
+} 

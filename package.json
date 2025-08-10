@@ -1,0 +1,106 @@
+{
+  "name": "windows-system-manager",
+  "version": "1.0.0",
+  "description": "Ứng dụng quản lý hệ thống Windows với giao diện chuyên nghiệp",
+  "main": "build/main.js",
+  "scripts": {
+    "clean": "rimraf build renderer/build",
+    "dev": "yarn clean && concurrently \"yarn build:watch\" \"yarn dev:renderer\" \"yarn electron:dev\"",
+    "dev:renderer": "webpack serve --mode development --port 3000",
+    "build": "yarn clean && tsc && yarn build:renderer:tsc && yarn build:renderer",
+    "build:watch": "tsc --watch --preserveWatchOutput",
+    "build:renderer:tsc": "tsc -p renderer/tsconfig.json",
+    "build:renderer": "webpack --mode production",
+    "build:renderer:watch": "webpack --mode development --watch",
+    "electron:dev": "wait-on build/main.js && nodemon --watch build --ext js --exec \"electron .\"",
+    "electron:build": "yarn build && electron-builder",
+    "start": "yarn build && electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "package": "yarn build && electron-builder --win",
+    "package:win": "yarn build && electron-builder --win --x64",
+    "package:win32": "yarn build && electron-builder --win --ia32",
+    "package:win64": "yarn build && electron-builder --win --x64",
+    "package:portable": "yarn build && electron-builder --win portable",
+    "package:installer": "yarn build && electron-builder --win nsis",
+    "package:config": "yarn build && electron-builder --config electron-builder.json",
+    "test:dev": "node test-dev.js",
+    "test:hot-reload": "node test-hot-reload.js",
+    "debug:dev": "node debug-dev.js"
+  },
+  "keywords": [
+    "electron",
+    "typescript",
+    "windows",
+    "system",
+    "manager"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "concurrently": "^8.2.2",
+    "copy-webpack-plugin": "^13.0.0",
+    "css-loader": "^6.8.1",
+    "electron": "^27.1.0",
+    "electron-builder": "^24.6.4",
+    "html-webpack-plugin": "^5.5.3",
+    "nodemon": "^3.1.10",
+    "rimraf": "^5.0.5",
+    "style-loader": "^3.3.3",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.3.0",
+    "wait-on": "^7.2.0",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.2.6",
+    "antd": "^5.12.8",
+    "fs-extra": "^11.1.1",
+    "node-powershell": "^5.0.1",
+    "node-ssh": "^13.1.0",
+    "os": "^0.1.2",
+    "path": "^0.12.7",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "registry-js": "^1.16.1",
+    "systeminformation": "^5.21.0",
+    "wifi-control": "^2.0.1",
+    "winreg": "^1.2.5"
+  },
+  "build": {
+    "appId": "com.windows.system.manager",
+    "productName": "Windows System Manager",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "build/**/*",
+      "renderer/build/**/*",
+      "node_modules/**/*",
+      "app.manifest",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon/icon.ico",
+      "requestedExecutionLevel": "requireAdministrator"
+
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Windows System Manager",
+      "installerIcon": "assets/icon/icon.ico",
+      "uninstallerIcon": "assets/icon/icon.ico",
+      "installerHeaderIcon": "assets/icon/icon.ico",
+      "perMachine": true
+    }
+  }
+}

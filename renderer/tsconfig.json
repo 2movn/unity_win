@@ -1,0 +1,16 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../build/renderer",
+    "jsx": "react-jsx",
+    "lib": ["ES2020", "DOM"]
+  },
+  "include": [
+    "dev/**/*",
+    "types/**/*"
+  ],
+  "exclude": [
+    "build",
+    "node_modules"
+  ]
+} 
