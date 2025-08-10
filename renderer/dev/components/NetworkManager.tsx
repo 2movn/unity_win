@@ -135,6 +135,8 @@ const NetworkManager: React.FC = () => {
   const [selectedInterfaceForDNS, setSelectedInterfaceForDNS] = useState<string>('');
   const [currentDNS, setCurrentDNS] = useState<DnsConfig | null>(null);
   const [ipv6Status, setIpv6Status] = useState<boolean>(true);
+  const [ipv6Toggling, setIpv6Toggling] = useState<boolean>(false);
+  const [selectedInterfaceForIPv6, setSelectedInterfaceForIPv6] = useState<string>('');
   const [proxyStatus, setProxyStatus] = useState<{ enabled: boolean; server?: string }>({ enabled: false });
   const [speedTestResult, setSpeedTestResult] = useState<SpeedTestResult | null>(null);
   const [testingSpeed, setTestingSpeed] = useState(false);
@@ -205,6 +207,16 @@ const NetworkManager: React.FC = () => {
       });
       
       setInterfaces(mappedData);
+
+      // Auto-select first interface for IPv6 section if none selected
+      if (!selectedInterfaceForIPv6 && mappedData.length > 0) {
+        const first = mappedData[0];
+        setSelectedInterfaceForIPv6(first.name);
+        try {
+          const st = await window.electronAPI.getIPv6Status(first.name);
+          setIpv6Status(st);
+        } catch {}
+      }
     } catch (error) {
       console.error('Error loading network interfaces:', error);
       message.error('Không thể tải thông tin mạng');
@@ -215,7 +227,7 @@ const NetworkManager: React.FC = () => {
 
   const loadIPv6Status = async () => {
     try {
-      const status = await window.electronAPI.getIPv6Status();
+      const status = await window.electronAPI.getIPv6Status(selectedInterfaceForIPv6 || undefined);
       setIpv6Status(status);
     } catch (error) {
       console.error('Error loading IPv6 status:', error);
@@ -364,16 +376,22 @@ const NetworkManager: React.FC = () => {
 
   const handleToggleIPv6 = async (enabled: boolean) => {
     try {
+      setIpv6Toggling(true);
       if (enabled) {
-        await window.electronAPI.enableIPv6();
+        await window.electronAPI.enableIPv6(selectedInterfaceForIPv6 || undefined);
         message.success('Đã bật IPv6');
       } else {
-        await window.electronAPI.disableIPv6();
+        await window.electronAPI.disableIPv6(selectedInterfaceForIPv6 || undefined);
         message.success('Đã tắt IPv6');
       }
-      setIpv6Status(enabled);
+      // Verify final state from system
+      const st = await window.electronAPI.getIPv6Status(selectedInterfaceForIPv6 || undefined);
+      setIpv6Status(st);
     } catch (error) {
       message.error('Lỗi khi thay đổi trạng thái IPv6');
+    }
+    finally {
+      setIpv6Toggling(false);
     }
   };
 
@@ -768,18 +786,37 @@ const NetworkManager: React.FC = () => {
             style={customStyles.card}
           >
             <Space direction="vertical" style={{ width: '100%' }}>
-              <div>
-                <Text style={{ color: gradientStyles.textColorSecondary }}>Trạng thái IPv6: </Text>
-                <Tag color={ipv6Status ? 'green' : 'red'}>
-                  {ipv6Status ? 'Bật' : 'Tắt'}
-                </Tag>
-              </div>
+              <Row gutter={8}>
+                <Col span={14}>
+                  <Select
+                    style={{ width: '100%' }}
+                    placeholder="Chọn interface"
+                    value={selectedInterfaceForIPv6 || undefined}
+                    onChange={async (v) => { setSelectedInterfaceForIPv6(v); const st = await window.electronAPI.getIPv6Status(v); setIpv6Status(st); }}
+                    options={interfaces.map(i => ({ value: i.name, label: `${i.name} (${i.type || ''})` }))}
+                    allowClear
+                  />
+                </Col>
+                <Col span={10}>
+                  <div>
+                    <Text style={{ color: gradientStyles.textColorSecondary }}>Trạng thái IPv6: </Text>
+                    <Tag color={ipv6Status ? 'green' : 'red'}>
+                      {ipv6Status ? 'Bật' : 'Tắt'}
+                    </Tag>
+                  </div>
+                </Col>
+              </Row>
               <Switch 
                 checked={ipv6Status}
                 onChange={handleToggleIPv6}
                 checkedChildren="Bật"
                 unCheckedChildren="Tắt"
+                loading={ipv6Toggling}
               />
+              <Space>
+                <Button onClick={loadIPv6Status}>Làm mới trạng thái</Button>
+                {/* Đã bỏ nút test/debug theo yêu cầu */}
+              </Space>
             </Space>
           </Card>
         </Col>

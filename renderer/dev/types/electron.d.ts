@@ -82,9 +82,9 @@ declare global {
       getCurrentDNS: (interfaceName: string) => Promise<any>;
       
       // IPv6 Management
-      disableIPv6: () => Promise<any>;
-      enableIPv6: () => Promise<any>;
-      getIPv6Status: () => Promise<any>;
+      disableIPv6: (interfaceName?: string) => Promise<any>;
+      enableIPv6: (interfaceName?: string) => Promise<any>;
+      getIPv6Status: (interfaceName?: string) => Promise<any>;
       
       // Network Optimization
       optimizeNetwork: (optimization: any) => Promise<any>;

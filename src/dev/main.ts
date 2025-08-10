@@ -288,16 +288,16 @@ class MainApp {
     });
 
     // IPv6 Management
-    ipcMain.handle('disable-ipv6', async () => {
-      return await this.networkService.disableIPv6();
+    ipcMain.handle('disable-ipv6', async (_e: IpcMainInvokeEvent, interfaceName?: string) => {
+      return await this.networkService.disableIPv6(interfaceName);
     });
 
-    ipcMain.handle('enable-ipv6', async () => {
-      return await this.networkService.enableIPv6();
+    ipcMain.handle('enable-ipv6', async (_e: IpcMainInvokeEvent, interfaceName?: string) => {
+      return await this.networkService.enableIPv6(interfaceName);
     });
 
-    ipcMain.handle('get-ipv6-status', async () => {
-      return await this.networkService.getIPv6Status();
+    ipcMain.handle('get-ipv6-status', async (_e: IpcMainInvokeEvent, interfaceName?: string) => {
+      return await this.networkService.getIPv6Status(interfaceName as any);
     });
 
     // Network Optimization

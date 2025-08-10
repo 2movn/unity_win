@@ -191,16 +191,26 @@ const SystemInfo: React.FC<SystemInfoProps> = ({ systemData, onRefresh }) => {
   // Tính toán usage
   const memoryUsage = systemData?.memory ? 
     ((systemData.memory.used / systemData.memory.total) * 100).toFixed(1) : 0;
-  
-  const diskUsage = systemData?.disk && systemData.disk.length > 0 ? 
-    ((systemData.disk[0].used / systemData.disk[0].size) * 100).toFixed(1) : 0;
+
+  // Tổng hợp tất cả ổ đĩa để chính xác hơn
+  let totalDiskSize = 0;
+  let totalDiskUsed = 0;
+  if (Array.isArray(systemData?.disk)) {
+    systemData.disk.forEach((d: any) => {
+      const size = Number(d?.size) || 0;
+      const used = Number(d?.used) || 0;
+      totalDiskSize += size;
+      totalDiskUsed += used;
+    });
+  }
+  const diskUsage = totalDiskSize > 0 ? ((totalDiskUsed / totalDiskSize) * 100).toFixed(1) : 0;
 
   // System Overview Cards
   const SystemOverview = () => (
     <div>
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col span={6}>
-          <Card style={customStyles.card}>
+          <Card style={{ ...customStyles.card, height: 140, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <Statistic
               title={<span style={{ color: gradientStyles.textColorSecondary }}>CPU</span>}
               value={systemData?.cpu?.brand || 'N/A'}
@@ -214,7 +224,7 @@ const SystemInfo: React.FC<SystemInfoProps> = ({ systemData, onRefresh }) => {
           </Card>
         </Col>
         <Col span={6}>
-          <Card style={customStyles.card}>
+          <Card style={{ ...customStyles.card, height: 140, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <Statistic
               title={<span style={{ color: gradientStyles.textColorSecondary }}>Memory</span>}
               value={memoryUsage}
@@ -232,7 +242,7 @@ const SystemInfo: React.FC<SystemInfoProps> = ({ systemData, onRefresh }) => {
           </Card>
         </Col>
         <Col span={6}>
-          <Card style={customStyles.card}>
+          <Card style={{ ...customStyles.card, height: 140, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <Statistic
               title={<span style={{ color: gradientStyles.textColorSecondary }}>GPU</span>}
               value={(systemData?.gpu && systemData.gpu.length > 0 ? systemData.gpu[0].model : 'N/A')}
@@ -247,17 +257,17 @@ const SystemInfo: React.FC<SystemInfoProps> = ({ systemData, onRefresh }) => {
           </Card>
         </Col>
         <Col span={6}>
-          <Card style={customStyles.card}>
+          <Card style={{ ...customStyles.card, height: 140, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
             <Statistic
-              title={<span style={{ color: gradientStyles.textColorSecondary }}>Disk Usage (C:)</span>}
+              title={<span style={{ color: gradientStyles.textColorSecondary }}>Disk Usage (All)</span>}
               value={diskUsage}
               suffix="%"
               valueStyle={{ color: gradientStyles.textColor }}
               prefix={<HddOutlined style={{ color: '#1890ff' }} />}
             />
             <Text style={{ color: gradientStyles.textColorSecondary }}>
-              {systemData?.disk && systemData.disk.length > 0 ? 
-                `${(systemData.disk[0].used / 1024 / 1024 / 1024).toFixed(1)} / ${(systemData.disk[0].size / 1024 / 1024 / 1024).toFixed(1)} GB` 
+              {totalDiskSize > 0 ? 
+                `${(totalDiskUsed / 1024 / 1024 / 1024).toFixed(1)} / ${(totalDiskSize / 1024 / 1024 / 1024).toFixed(1)} GB` 
                 : 'N/A'
               }
             </Text>

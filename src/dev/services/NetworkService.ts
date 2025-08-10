@@ -627,13 +627,57 @@ export class NetworkService {
     }
   }
 
-  // IPv6 Management
-  async disableIPv6(): Promise<boolean> {
+  // IPv6 Management (per default interface on Windows 11)
+  private async getDefaultInterfaceAlias(): Promise<string> {
     try {
-      // Disable IPv6 on all interfaces
-      await executeCmdCommand('netsh interface ipv6 set global ipv6=disabled');
-      await executeCmdCommand('netsh interface ipv6 set interface "Local Area Connection" ipv6=disabled');
-      await executeCmdCommand('netsh interface ipv6 set interface "Wi-Fi" ipv6=disabled');
+      const script = `
+        $iface = Get-NetIPConfiguration | Where-Object { $_.IPv4DefaultGateway -ne $null -and $_.NetAdapter.Status -eq 'Up' } | Select-Object -First 1
+        if ($iface -and $iface.InterfaceAlias) { $iface.InterfaceAlias }
+        else { (Get-NetAdapter | Where-Object { $_.Status -eq 'Up' -and $_.HardwareInterface -eq $true } | Sort-Object -Property InterfaceMetric | Select-Object -First 1).Name }
+      `;
+      const { stdout } = await executePowerShellScript(script);
+      const alias = stdout.trim().split('\n').pop()?.trim() || '';
+      return alias || 'Ethernet';
+    } catch {
+      return 'Ethernet';
+    }
+  }
+
+  async disableIPv6(interfaceName?: string): Promise<boolean> {
+    try {
+      const alias = interfaceName && interfaceName.trim().length > 0 ? interfaceName : await this.getDefaultInterfaceAlias();
+      const script = `
+        $alias='${alias}'
+        $Enabled=$false
+        $out = [ordered]@{ alias = $alias; targetEnabled = $Enabled }
+        try {
+          $adapter = Get-NetAdapter | Where-Object { $_.Name -eq $alias -or $_.InterfaceAlias -eq $alias -or $_.InterfaceDescription -eq $alias } | Select-Object -First 1
+          if (-not $adapter) { $out.error = 'INTERFACE_NOT_FOUND'; $out | ConvertTo-Json -Compress; exit 1 }
+          $err = $null
+          try { Set-NetAdapterBinding -Name $adapter.Name -ComponentID ms_tcpip6 -Enabled:$Enabled -PassThru | Out-Null } catch { $err=$_.Exception.Message }
+          if ($err) {
+            try { Disable-NetAdapterBinding -Name $adapter.Name -ComponentID ms_tcpip6 -PassThru | Out-Null; $err=$null } catch { $err=$_.Exception.Message }
+          }
+          $tries=0
+          while ($tries -lt 12) {
+            Start-Sleep -Milliseconds 300
+            $state=(Get-NetAdapterBinding -Name $adapter.Name -ComponentID ms_tcpip6 -ErrorAction SilentlyContinue).Enabled
+            if (-not $state) { break }
+            $tries++
+          }
+          if ($tries -ge 12) { try { Restart-NetAdapter -Name $adapter.Name -Confirm:$false | Out-Null; Start-Sleep -Seconds 2 } catch {} }
+          $final=(Get-NetAdapterBinding -Name $adapter.Name -ComponentID ms_tcpip6 -ErrorAction SilentlyContinue).Enabled
+          $out.finalEnabled=[bool]$final
+          $out.retries=$tries
+          if ($err) { $out.error=$err }
+        } catch { $out.error=$_.Exception.Message }
+        $out | ConvertTo-Json -Depth 4 -Compress
+      `;
+      const { stdout } = await executePowerShellScript(script);
+      const json = stdout.trim().split('\n').pop() || '{}';
+      const res = JSON.parse(json);
+      const finalEnabled = !!res.finalEnabled;
+      if (finalEnabled) throw new Error('IPv6 vẫn bật sau khi cố gắng tắt');
       return true;
     } catch (error) {
       console.error('Lỗi khi tắt IPv6:', error);
@@ -641,12 +685,41 @@ export class NetworkService {
     }
   }
 
-  async enableIPv6(): Promise<boolean> {
+  async enableIPv6(interfaceName?: string): Promise<boolean> {
     try {
-      // Enable IPv6 on all interfaces
-      await executeCmdCommand('netsh interface ipv6 set global ipv6=enabled');
-      await executeCmdCommand('netsh interface ipv6 set interface "Local Area Connection" ipv6=enabled');
-      await executeCmdCommand('netsh interface ipv6 set interface "Wi-Fi" ipv6=enabled');
+      const alias = interfaceName && interfaceName.trim().length > 0 ? interfaceName : await this.getDefaultInterfaceAlias();
+      const script = `
+        $alias='${alias}'
+        $Enabled=$true
+        $out = [ordered]@{ alias = $alias; targetEnabled = $Enabled }
+        try {
+          $adapter = Get-NetAdapter | Where-Object { $_.Name -eq $alias -or $_.InterfaceAlias -eq $alias -or $_.InterfaceDescription -eq $alias } | Select-Object -First 1
+          if (-not $adapter) { $out.error = 'INTERFACE_NOT_FOUND'; $out | ConvertTo-Json -Compress; exit 1 }
+          $err = $null
+          try { Set-NetAdapterBinding -Name $adapter.Name -ComponentID ms_tcpip6 -Enabled:$Enabled -PassThru | Out-Null } catch { $err=$_.Exception.Message }
+          if ($err) {
+            try { Enable-NetAdapterBinding -Name $adapter.Name -ComponentID ms_tcpip6 -PassThru | Out-Null; $err=$null } catch { $err=$_.Exception.Message }
+          }
+          $tries=0
+          while ($tries -lt 12) {
+            Start-Sleep -Milliseconds 300
+            $state=(Get-NetAdapterBinding -Name $adapter.Name -ComponentID ms_tcpip6 -ErrorAction SilentlyContinue).Enabled
+            if ($state) { break }
+            $tries++
+          }
+          if ($tries -ge 12) { try { Restart-NetAdapter -Name $adapter.Name -Confirm:$false | Out-Null; Start-Sleep -Seconds 2 } catch {} }
+          $final=(Get-NetAdapterBinding -Name $adapter.Name -ComponentID ms_tcpip6 -ErrorAction SilentlyContinue).Enabled
+          $out.finalEnabled=[bool]$final
+          $out.retries=$tries
+          if ($err) { $out.error=$err }
+        } catch { $out.error=$_.Exception.Message }
+        $out | ConvertTo-Json -Depth 4 -Compress
+      `;
+      const { stdout } = await executePowerShellScript(script);
+      const json = stdout.trim().split('\n').pop() || '{}';
+      const res = JSON.parse(json);
+      const finalEnabled = !!res.finalEnabled;
+      if (!finalEnabled) throw new Error('IPv6 vẫn tắt sau khi cố gắng bật');
       return true;
     } catch (error) {
       console.error('Lỗi khi bật IPv6:', error);
@@ -654,10 +727,14 @@ export class NetworkService {
     }
   }
 
-  async getIPv6Status(): Promise<boolean> {
+  async getIPv6Status(interfaceName?: string): Promise<boolean> {
     try {
-      const { stdout } = await executeCmdCommand('netsh interface ipv6 show global');
-      return !stdout.includes('IPv6 = Disabled');
+      const alias = interfaceName && interfaceName.trim().length > 0 ? interfaceName : await this.getDefaultInterfaceAlias();
+      const script = `
+        try { (Get-NetAdapterBinding -Name "${alias}" -ComponentID ms_tcpip6).Enabled } catch { 'False' }
+      `;
+      const { stdout } = await executePowerShellScript(script);
+      return stdout.trim().toLowerCase().includes('true');
     } catch (error) {
       console.error('Lỗi khi kiểm tra trạng thái IPv6:', error);
       return false;
@@ -720,24 +797,34 @@ export class NetworkService {
   // Proxy Management
   async setProxy(config: ProxyConfig): Promise<boolean> {
     try {
+      const proxyString = `${config.server}:${config.port}`;
+      const bypassList = (config.bypass && config.bypass.length > 0) ? config.bypass.join(';') : '';
+
       if (config.enabled) {
-        const proxyString = `${config.server}:${config.port}`;
-        await executeCmdCommand(`netsh winhttp set proxy ${proxyString}`);
-        
-        // Set proxy for specific protocols if needed
-        if (config.username && config.password) {
-          // Note: Windows doesn't support username/password in netsh
-          console.log('Username/password proxy requires manual configuration');
-        }
-        
-        if (config.bypass && config.bypass.length > 0) {
-          const bypassList = config.bypass.join(';');
-          await executeCmdCommand(`netsh winhttp set proxy ${proxyString} bypass-list="${bypassList}"`);
-        }
+        // WinINET (per-user) proxy settings for Windows 11
+        const psEnable = `
+          $path = 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings'
+          New-Item -Path $path -Force | Out-Null
+          Set-ItemProperty -Path $path -Name ProxyEnable -Type DWord -Value 1
+          Set-ItemProperty -Path $path -Name ProxyServer -Type String -Value '${proxyString}'
+          ${bypassList ? `Set-ItemProperty -Path $path -Name ProxyOverride -Type String -Value '${bypassList}'` : `Remove-ItemProperty -Path $path -Name ProxyOverride -ErrorAction SilentlyContinue`}
+          Remove-ItemProperty -Path $path -Name AutoConfigURL -ErrorAction SilentlyContinue
+        `;
+        await executePowerShellScript(psEnable);
+
+        // Sync WinHTTP with WinINET (optional but recommended for services)
+        await executeCmdCommand('netsh winhttp import proxy source=ie');
       } else {
+        const psDisable = `
+          $path = 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings'
+          Set-ItemProperty -Path $path -Name ProxyEnable -Type DWord -Value 0
+          Remove-ItemProperty -Path $path -Name ProxyServer -ErrorAction SilentlyContinue
+          Remove-ItemProperty -Path $path -Name ProxyOverride -ErrorAction SilentlyContinue
+        `;
+        await executePowerShellScript(psDisable);
         await executeCmdCommand('netsh winhttp reset proxy');
       }
-      
+
       return true;
     } catch (error) {
       console.error('Lỗi khi cài đặt proxy:', error);
@@ -745,22 +832,33 @@ export class NetworkService {
     }
   }
 
+  // Diagnostics: Test toggling IPv6 binding on a specific adapter and report
+  // Removed diagnoseIPv6 per requirement to drop test/debug from app
+
   async getProxyStatus(): Promise<{ enabled: boolean; server?: string; bypass?: string[] }> {
     try {
-      const { stdout } = await executeCmdCommand('netsh winhttp show proxy');
-      
-      if (stdout.includes('Direct access')) {
-        return { enabled: false };
-      }
-      
-      const serverMatch = stdout.match(/Proxy Server\(s\):\s*(.+)/);
-      const bypassMatch = stdout.match(/Bypass List:\s*(.+)/);
-      
-      return {
-        enabled: true,
-        server: serverMatch?.[1]?.trim(),
-        bypass: bypassMatch?.[1]?.split(';').map(s => s.trim())
-      };
+      const script = `
+        $path = 'HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings'
+        if (Test-Path $path) {
+          $p = Get-ItemProperty -Path $path
+          $enabled = [bool]($p.ProxyEnable)
+          $server = $p.ProxyServer
+          $bypass = $p.ProxyOverride
+          Write-Output ("EN=" + $enabled)
+          Write-Output ("SR=" + $server)
+          Write-Output ("BP=" + $bypass)
+        } else { Write-Output 'EN=False' }
+      `;
+      const { stdout } = await executePowerShellScript(script);
+      const lines = stdout.split('\n').map(l => l.trim());
+      const enLine = lines.find(l => l.startsWith('EN=')) || 'EN=False';
+      const srLine = lines.find(l => l.startsWith('SR=')) || 'SR=';
+      const bpLine = lines.find(l => l.startsWith('BP=')) || 'BP=';
+      const enabled = enLine.replace('EN=', '').toLowerCase().includes('true');
+      const server = srLine.replace('SR=', '') || undefined;
+      const bypassRaw = bpLine.replace('BP=', '') || '';
+      const bypass = bypassRaw ? bypassRaw.split(';').map(s => s.trim()).filter(Boolean) : undefined;
+      return { enabled, server, bypass };
     } catch (error) {
       console.error('Lỗi khi lấy trạng thái proxy:', error);
       return { enabled: false };

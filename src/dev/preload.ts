@@ -213,9 +213,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getCurrentDNS: (interfaceName: string) => ipcRenderer.invoke('get-current-dns', interfaceName),
   
   // IPv6 Management
-  disableIPv6: () => ipcRenderer.invoke('disable-ipv6'),
-  enableIPv6: () => ipcRenderer.invoke('enable-ipv6'),
-  getIPv6Status: () => ipcRenderer.invoke('get-ipv6-status'),
+  disableIPv6: (interfaceName?: string) => ipcRenderer.invoke('disable-ipv6', interfaceName),
+  enableIPv6: (interfaceName?: string) => ipcRenderer.invoke('enable-ipv6', interfaceName),
+  getIPv6Status: (interfaceName?: string) => ipcRenderer.invoke('get-ipv6-status', interfaceName),
   
   // Network Optimization
   optimizeNetwork: (optimization: any) => ipcRenderer.invoke('optimize-network', optimization),
