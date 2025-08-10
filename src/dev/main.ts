@@ -1,6 +1,8 @@
 import { app, BrowserWindow, ipcMain, dialog, shell, IpcMainInvokeEvent } from 'electron';
 import * as path from 'path';
 import * as fs from 'fs-extra';
+import * as https from 'https';
+import * as http from 'http';
 import { SystemInfoService } from './services/SystemInfoService';
 import { NetworkService } from './services/NetworkService';
 import { BackupService } from './services/BackupService';
@@ -669,6 +671,54 @@ class MainApp {
     // Open external
     ipcMain.handle('open-external', async (event: IpcMainInvokeEvent, url: string) => {
       await shell.openExternal(url);
+    });
+
+    // File download (QuickApps)
+    ipcMain.handle('download-file', async (_event: IpcMainInvokeEvent, urlStr: string, suggestedName?: string) => {
+      const doDownload = (targetUrl: string): Promise<{ success: boolean; path?: string; message?: string }> =>
+        new Promise((resolve) => {
+          try {
+            const downloadsDir = app.getPath('downloads');
+            const urlObj = new URL(targetUrl);
+            const fallbackName = path.basename(urlObj.pathname) || 'download.bin';
+            const fileName = suggestedName && suggestedName.trim() ? suggestedName.trim() : fallbackName;
+            const targetPath = path.join(downloadsDir, fileName);
+            const proto = urlObj.protocol === 'http:' ? http : https;
+            const request = proto.get(targetUrl, (response) => {
+              if (response.statusCode && response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
+                const redirectUrl = response.headers.location.startsWith('http')
+                  ? response.headers.location
+                  : `${urlObj.protocol}//${urlObj.host}${response.headers.location}`;
+                resolve(doDownload(redirectUrl));
+                return;
+              }
+              if (response.statusCode !== 200) {
+                resolve({ success: false, message: `HTTP ${response.statusCode}` });
+                return;
+              }
+              fs.ensureDirSync(downloadsDir);
+              const fileStream = fs.createWriteStream(targetPath);
+              response.pipe(fileStream);
+              fileStream.on('finish', () => {
+                fileStream.close();
+                resolve({ success: true, path: targetPath });
+              });
+              fileStream.on('error', (err: any) => {
+                resolve({ success: false, message: err?.message || 'Lỗi ghi file' });
+              });
+            });
+            request.on('error', (err: any) => {
+              resolve({ success: false, message: err?.message || 'Lỗi mạng' });
+            });
+          } catch (error: any) {
+            resolve({ success: false, message: error?.message || 'Lỗi không xác định' });
+          }
+        });
+
+      if (!urlStr || typeof urlStr !== 'string') {
+        return { success: false, message: 'URL không hợp lệ' };
+      }
+      return await doDownload(urlStr);
     });
   }
 

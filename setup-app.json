@@ -1,0 +1,89 @@
+{
+  "status": true,
+  "app":[
+    {
+      "name": "UniKey",
+      "version": "4.6 RC2",
+      "category": "keyboard",
+      "description": "Công cụ hỗ trợ viết tiếng việt nâng cao.",
+      "icon": "https://pgdbactramy.edu.vn/upload/53816/20180425/unikey.png",
+      "url": "https://www.unikey.org/assets/release/unikey46RC2-230919-win64.zip"
+    },
+    {
+      "name": "Zalo",
+      "version": "25.8.1",
+      "category": "social",
+      "description": "Công cụ hỗ trợ chat và gửi tin nhắn Zalo.",
+      "icon": "https://stc-zaloprofile.zdn.vn/favicon.ico",
+      "url": "https://res-download-pc-te-vnno-cm-4.zadn.vn/win/ZaloSetup-25.8.1.exe"
+    },
+    {
+      "name": "Telegram",
+      "version": "6.0.2",
+      "category": "social",
+      "description": "Công cụ hỗ trợ chat và gửi tin nhắn Telegram.", 
+      "icon": "https://desktop.telegram.org/img/apple-touch-icon.png",
+      "url": "https://td.telegram.org/tx64/tportable-x64.6.0.2.zip"
+    },
+    {
+      "name": "Chrome",
+      "version": "140.0.0.0",
+      "category": "browser",
+      "description": "Công cụ hỗ trợ duyệt web Chrome.",
+      "icon": "https://www.google.com/chrome/static/images/favicons/apple-icon-180x180.png",
+      "url": "https://dl.google.com/chrome/install/latest/chrome_installer.exe"
+    },{
+      "name": "Firefox",
+      "version": "141.0.3",
+      "category": "browser",
+      "description": "Công cụ hỗ trợ duyệt web Firefox.",
+      "icon": "https://www.firefox.com/media/img/favicons/firefox/browser/favicon-196x196.59e3822720be.png",
+      "url": "https://cdn.stubdownloader.services.mozilla.com/builds/firefox-stub/vi/win/941e3a4e49eb867acfaa1134e0d8fcf2d8ccf0ad94e920119fb19ab07270d5a9/Firefox%20Installer.exe"
+    },
+    {
+      "name": "Edge",
+      "version": "141.0.0.0",
+      "category": "browser",
+      "description": "Công cụ hỗ trợ duyệt web Edge.",
+      "icon": "https://edgestatic.azureedge.net/shared/cms/lrs1c69a1j/section-images/29bfeef37eef4ca3bcf962274c1c7766-png-w265.avif",
+      "url": "https://c2rsetup.officeapps.live.com/c2r/downloadEdge.aspx?platform=Default&source=EdgeStablePage&Channel=Stable&language=en&brand=M100"
+    },
+    {
+      "name": "UltraView",
+      "version": "6.6",
+      "category": "remote",
+      "description": "Công cụ hỗ trợ điều khiển máy tính từ xa.",
+      "icon": "https://www.ultraviewer.net/ultraviewer.ico",
+      "url": "https://www.ultraviewer.net/vi/UltraViewer_setup_6.6_vi.exe"
+    },
+    {
+      "name": "Anydesk",
+      "version": "4.2.0.1000",
+      "category": "remote",
+      "description": "Công cụ hỗ trợ điều khiển máy tính từ xa.",
+      "icon": "https://anydesk.com/_static/img/favicon/apple-touch-icon.png",
+      "url": "https://download.anydesk.com/AnyDesk.exe"
+    },{
+      "name": "VS Code",
+      "version": "1.103.0",
+      "category": "editor",
+      "description": "Công cụ hỗ trợ code VS Code.",
+      "icon": "https://code.visualstudio.com/apple-touch-icon.png",
+      "url": "https://vscode.download.prss.microsoft.com/dbazure/download/stable/e3550cfac4b63ca4eafca7b601f0d2885817fd1f/VSCodeUserSetup-x64-1.103.0.exe"
+    },{
+      "name": "Cursor",
+      "version": "1.22.0",
+      "category": "editor",
+      "description": "Công cụ hỗ trợ code Cursor.",
+      "icon": "https://cursor.com/icons/180.png",
+      "url": "https://downloads.cursor.com/production/e50823e9ded15fddfd743c7122b4724130c25df8/win32/x64/user-setup/CursorUserSetup-x64-1.4.3.exe"
+    },{
+      "name": "Github Desktop",
+      "version": "3.5.2",
+      "category": "editor",
+      "description": "Công cụ hỗ trợ code Github Desktop.",
+      "icon": "https://github.com/fluidicon.png",
+      "url": "https://desktop.githubusercontent.com/releases/3.5.2-14087268/GitHubDesktopSetup-x64.exe"
+    }
+  ]
+}

@@ -23,6 +23,7 @@ import BackupManager from './components/BackupManager';
 import CleanupManager from './components/CleanupManager';
 import WindowsOptimization from './components/WindowsOptimization';
 import ToolsManager from './components/ToolsManager';
+import QuickApps from './components/QuickApps';
  
 import HardwareIcon from './components/HardwareIcon';
 
@@ -124,6 +125,11 @@ const App: React.FC = () => {
       icon: <ToolOutlined />,
       label: 'Công cụ hệ thống',
     },
+    {
+      key: 'quickapps',
+      icon: <AppstoreOutlined />,
+      label: 'Tải nhanh ứng dụng',
+    },
     
 
   ];
@@ -144,6 +150,8 @@ const App: React.FC = () => {
         return <WindowsOptimization />;
       case 'tools':
         return <ToolsManager />;
+      case 'quickapps':
+        return <QuickApps />;
       
 
       default:

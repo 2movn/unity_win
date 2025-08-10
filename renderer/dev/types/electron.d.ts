@@ -110,6 +110,7 @@ declare global {
       
       // External
       openExternal: (url: string) => Promise<void>;
+      downloadFile: (url: string, suggestedName?: string) => Promise<{ success: boolean; path?: string; message?: string }>;
     };
   }
 }

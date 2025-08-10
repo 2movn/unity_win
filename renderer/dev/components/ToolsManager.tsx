@@ -1,29 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Button, Typography, Space, Table, Modal,Spin, Form, Input, Select, message, Tag, Descriptions, Divider, Tabs, Statistic, Progress, Alert, Switch, Tooltip, List, Checkbox } from 'antd';
-import { ToolOutlined, SettingOutlined, SafetyOutlined, ThunderboltFilled, DatabaseOutlined, ReloadOutlined, CheckCircleOutlined, ExclamationCircleOutlined, ClockCircleOutlined, InfoCircleOutlined, FolderOutlined, AppstoreOutlined, DownloadOutlined, UploadOutlined, DesktopOutlined, MenuOutlined, RocketOutlined, BulbOutlined, EyeOutlined, DashboardOutlined, ControlOutlined, FileTextOutlined } from '@ant-design/icons';
-import { gradientStyles, customStyles, tableStyles, modalStyles } from '../styles/theme';
+import { Card, Row, Col, Button, Typography, Space, Modal, Spin, Select, message, Tag, Divider, Tabs, Alert, Switch } from 'antd';
+import { ToolOutlined, SettingOutlined, ReloadOutlined, AppstoreOutlined, FolderOutlined, CheckCircleOutlined, ExclamationCircleOutlined, InfoCircleOutlined, DesktopOutlined, MenuOutlined, RocketOutlined, BulbOutlined, EyeOutlined, DashboardOutlined, ControlOutlined, DownloadOutlined, UploadOutlined, FileTextOutlined } from '@ant-design/icons';
+import ZaloManager from './ZaloManager';
+import { gradientStyles, customStyles } from '../styles/theme';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-interface DriveInfo {
-  drive: string;
-  label: string;
-  freeSpace: number;
-  totalSpace: number;
-  fileSystem: string;
-  isWindowsDrive: boolean;
-  isRemovable: boolean;
-  isNetwork: boolean;
-}
-
-interface AppInfo {
-  name: string;
-  description: string;
-  downloadUrl: string;
-  icon: string;
-  category: string;
-}
+  // Removed drive and app types as Zalo & app installer are moved out
 
   interface OptimizationOption {
   id: string;
@@ -34,12 +18,9 @@ interface AppInfo {
 }
 
 const ToolsManager: React.FC = () => {
-  const [availableDrives, setAvailableDrives] = useState<DriveInfo[]>([]);
-  const [selectedDrive, setSelectedDrive] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('tools');
-  const [selectedApps, setSelectedApps] = useState<string[]>([]);
   const [optimizationOptions, setOptimizationOptions] = useState<OptimizationOption[]>([
     // Taskbar optimizations
     {
@@ -366,50 +347,6 @@ const ToolsManager: React.FC = () => {
     }
   ]);
 
-  const availableApps: AppInfo[] = [
-    {
-      name: 'Google Chrome',
-      description: 'Trình duyệt web nhanh và an toàn',
-      downloadUrl: 'https://www.google.com/chrome/',
-      icon: '🌐',
-      category: 'browser'
-    },
-    {
-      name: 'Mozilla Firefox',
-      description: 'Trình duyệt web mã nguồn mở',
-      downloadUrl: 'https://www.mozilla.org/firefox/',
-      icon: '🦊',
-      category: 'browser'
-    },
-    {
-      name: '7-Zip',
-      description: 'Nén và giải nén file',
-      downloadUrl: 'https://www.7-zip.org/',
-      icon: '📦',
-      category: 'utility'
-    },
-    {
-      name: 'Notepad++',
-      description: 'Trình soạn thảo văn bản nâng cao',
-      downloadUrl: 'https://notepad-plus-plus.org/',
-      icon: '📝',
-      category: 'editor'
-    },
-    {
-      name: 'VLC Media Player',
-      description: 'Trình phát media đa định dạng',
-      downloadUrl: 'https://www.videolan.org/vlc/',
-      icon: '🎬',
-      category: 'media'
-    },
-    {
-      name: 'CCleaner',
-      description: 'Dọn dẹp và tối ưu hệ thống',
-      downloadUrl: 'https://www.ccleaner.com/',
-      icon: '🧹',
-      category: 'utility'
-    }
-  ];
 
   useEffect(() => {
     const initializeData = async () => {
@@ -417,15 +354,14 @@ const ToolsManager: React.FC = () => {
       try {
         console.log('🚀 Bắt đầu khởi tạo dữ liệu...');
         
-        // Load drives and optimization settings in parallel
+        // Chỉ tải trạng thái tối ưu
         const results = await Promise.allSettled([
-          loadAvailableDrives(),
           loadOptimizationSettings()
         ]);
         
         // Log results
         results.forEach((result, index) => {
-          const taskName = index === 0 ? 'loadAvailableDrives' : 'loadOptimizationSettings';
+          const taskName = 'loadOptimizationSettings';
           if (result.status === 'rejected') {
             console.error(`❌ ${taskName} failed:`, result.reason);
           } else {
@@ -459,43 +395,6 @@ const ToolsManager: React.FC = () => {
     const networkOptions = optimizationOptions.filter(opt => opt.category === 'network');
     console.log('Network options updated:', networkOptions.filter(opt => opt.enabled).length + '/' + networkOptions.length + ' enabled');
   }, [optimizationOptions]);
-
-  const loadAvailableDrives = async () => {
-    try {
-      const drives = await window.electronAPI.getAvailableDrives();
-      
-      // Validate drives response
-      if (!Array.isArray(drives)) {
-        throw new Error('Invalid drives response format');
-      }
-      
-      // Filter out invalid drives
-      const validDrives = drives.filter(drive => 
-        drive && 
-        typeof drive.drive === 'string' && 
-        drive.drive.length > 0 &&
-        typeof drive.freeSpace === 'number' &&
-        typeof drive.totalSpace === 'number'
-      );
-      
-      setAvailableDrives(validDrives);
-      console.log('✅ Loaded available drives:', validDrives.length);
-      
-      // Auto-select first non-Windows drive if available
-      if (!selectedDrive && validDrives.length > 0) {
-        const nonWindowsDrive = validDrives.find(drive => !drive.isWindowsDrive);
-        if (nonWindowsDrive) {
-          setSelectedDrive(nonWindowsDrive.drive);
-        }
-      }
-      
-    } catch (error) {
-      console.error('❌ Lỗi khi load danh sách ổ cứng:', error);
-      setAvailableDrives([]); // Set empty array as fallback
-      message.warning('Không thể tải danh sách ổ cứng. Vui lòng thử lại.');
-      // Don't throw error, let other operations continue
-    }
-  };
 
   const loadOptimizationSettings = async () => {
     try {
@@ -533,70 +432,7 @@ const ToolsManager: React.FC = () => {
     }
   };
 
-  const handleMoveZalo = async () => {
-    if (!selectedDrive) {
-      message.warning('Vui lòng chọn ổ cứng đích');
-      return;
-    }
-
-    // Validate drive exists
-    const driveExists = availableDrives.some(drive => drive.drive === selectedDrive);
-    if (!driveExists) {
-      message.error('Ổ cứng đã chọn không tồn tại');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const result = await window.electronAPI.moveZaloToDrive(selectedDrive);
-      if (result && result.success) {
-        message.success('Di chuyển Zalo thành công!');
-        setSelectedDrive('');
-        // Refresh drive list
-        await loadAvailableDrives();
-      } else {
-        message.error(result?.message || 'Lỗi khi di chuyển Zalo');
-      }
-    } catch (error) {
-      console.error('Lỗi khi di chuyển Zalo:', error);
-      message.error('Không thể di chuyển Zalo. Vui lòng thử lại.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleInstallApps = async (selectedApps: string[]) => {
-    if (selectedApps.length === 0) {
-      message.warning('Vui lòng chọn ít nhất một ứng dụng');
-      return;
-    }
-
-    // Validate selected apps exist
-    const validApps = selectedApps.filter(appName => 
-      availableApps.some(app => app.name === appName)
-    );
-    
-    if (validApps.length === 0) {
-      message.error('Không có ứng dụng hợp lệ nào được chọn');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const result = await window.electronAPI.installSelectedApps(validApps);
-      if (result && result.success) {
-        message.success(`Cài đặt ${validApps.length} ứng dụng thành công!`);
-        setSelectedApps([]); // Clear selection after success
-      } else {
-        message.error(result?.message || 'Lỗi khi cài đặt ứng dụng');
-      }
-    } catch (error) {
-      console.error('Lỗi khi cài đặt ứng dụng:', error);
-      message.error('Không thể cài đặt ứng dụng. Vui lòng thử lại.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  // Đã loại bỏ chức năng Di chuyển Zalo và Cài đặt ứng dụng khỏi trang này
 
   const handleOptimizationToggle = async (optionId: string, enabled: boolean) => {
     // Validate option exists
@@ -831,13 +667,7 @@ const ToolsManager: React.FC = () => {
     }
   };
 
-  const formatBytes = (bytes: number): string => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
+  // Helper removed (không còn dùng ở trang này)
 
   const renderOptimizationSection = (category: string, title: string, icon: React.ReactNode) => {
     const categoryOptions = optimizationOptions.filter(option => option.category === category);
@@ -1068,86 +898,7 @@ const ToolsManager: React.FC = () => {
             ),
             children: (
               <div>
-                <Row gutter={[16, 16]}>
-                  <Col span={12}>
-                    <Card 
-                      title={<span style={{ color: gradientStyles.textColor }}>Di chuyển Zalo</span>} 
-                      extra={<FolderOutlined style={{ color: gradientStyles.textColor }} />}
-                      style={customStyles.card}
-                    >
-                      <Space direction="vertical" style={{ width: '100%' }}>
-                        <Text style={{ color: gradientStyles.textColorSecondary }}>Di chuyển Zalo từ ổ C sang ổ khác để tiết kiệm dung lượng:</Text>
-                        <Select
-                          value={selectedDrive}
-                          onChange={setSelectedDrive}
-                          placeholder="Chọn ổ cứng đích"
-                          style={{ width: '100%' }}
-                        >
-                          {availableDrives
-                            .filter(drive => !drive.isWindowsDrive)
-                            .map(drive => (
-                              <Option key={drive.drive} value={drive.drive}>
-                                {drive.drive} - {drive.label} ({formatBytes(drive.freeSpace)} free)
-                              </Option>
-                            ))}
-                        </Select>
-                        <Text style={{ color: gradientStyles.textColorSecondary }}>
-                          💡 Zalo sẽ được copy sang ổ mới và tạo symlink để không ảnh hưởng đến hoạt động
-                        </Text>
-                        <Button 
-                          type="primary" 
-                          onClick={handleMoveZalo}
-                          loading={loading}
-                          icon={<FolderOutlined />}
-                          disabled={!selectedDrive}
-                          style={customStyles.button}
-                        >
-                          Di chuyển Zalo
-                        </Button>
-                      </Space>
-                    </Card>
-                  </Col>
-
-                  <Col span={12}>
-                    <Card 
-                      title={<span style={{ color: gradientStyles.textColor }}>Cài đặt ứng dụng</span>} 
-                      extra={<AppstoreOutlined style={{ color: gradientStyles.textColor }} />}
-                      style={customStyles.card}
-                    >
-                      <Space direction="vertical" style={{ width: '100%' }}>
-                        <Text style={{ color: gradientStyles.textColorSecondary }}>Chọn ứng dụng cần cài đặt:</Text>
-                                                 <Checkbox.Group
-                           value={selectedApps}
-                           onChange={setSelectedApps}
-                           style={{ width: '100%' }}
-                         >
-                           {availableApps.map((app) => (
-                             <div key={app.name} style={{ marginBottom: 8 }}>
-                               <Checkbox value={app.name}>
-                                 <Space>
-                                   <Text>{app.icon}</Text>
-                                   <Text strong style={{ color: gradientStyles.textColor }}>{app.name}</Text>
-                                   <Text style={{ color: gradientStyles.textColorSecondary }}>{app.description}</Text>
-                                 </Space>
-                               </Checkbox>
-                             </div>
-                           ))}
-                         </Checkbox.Group>
-                         <Button 
-                           type="primary"
-                           onClick={() => handleInstallApps(selectedApps)}
-                           loading={loading}
-                           icon={<DownloadOutlined />}
-                           block
-                           disabled={selectedApps.length === 0}
-                           style={customStyles.button}
-                         >
-                           Cài đặt ứng dụng đã chọn ({selectedApps.length})
-                         </Button>
-                      </Space>
-                    </Card>
-                  </Col>
-                </Row>
+                {/* Đã loại bỏ Di chuyển Zalo và Cài đặt ứng dụng khỏi trang này */}
 
                 <Divider style={{ borderColor: gradientStyles.borderColor }} />
 
@@ -1387,6 +1138,16 @@ const ToolsManager: React.FC = () => {
                 </Row>
               </div>
             )
+          },
+          {
+            key: 'zalo',
+            label: (
+              <span style={{ color: gradientStyles.textColor }}>
+                <FolderOutlined style={{ marginRight: 8 }} />
+                Zalo
+              </span>
+            ),
+            children: <ZaloManager />
           }
         ]}
       />
