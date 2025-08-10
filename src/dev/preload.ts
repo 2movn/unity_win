@@ -120,6 +120,7 @@ declare global {
       // External
       openExternal: (url: string) => Promise<void>;
       downloadFile: (url: string, suggestedName?: string) => Promise<{ success: boolean; path?: string; message?: string }>;
+      openDownloadsFolder: () => Promise<{ success: boolean; path?: string; message?: string }>;
     };
   }
 }
@@ -241,4 +242,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // External
   openExternal: (url: string) => ipcRenderer.invoke('open-external', url),
   downloadFile: (url: string, suggestedName?: string) => ipcRenderer.invoke('download-file', url, suggestedName),
+  openDownloadsFolder: () => ipcRenderer.invoke('open-downloads-folder'),
 }); 

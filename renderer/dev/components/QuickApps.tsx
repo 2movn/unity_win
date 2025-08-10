@@ -16,7 +16,7 @@ interface QuickAppItem {
   category?: string;
 }
 
-const DATA_URL = 'https://raw.githubusercontent.com/2movn/unity_win/setup-app.json';
+const DATA_URL = 'https://raw.githubusercontent.com/2movn/unity_win/refs/heads/main/setup-app.json';
 
 const QuickApps: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -124,6 +124,14 @@ const QuickApps: React.FC = () => {
             />
             <Button icon={<ReloadOutlined />} onClick={fetchApps} loading={loading}>
               Làm mới
+            </Button>
+            <Button onClick={async () => {
+              const res = await window.electronAPI.openDownloadsFolder();
+              if (!res?.success) {
+                message.error(res?.message || 'Không thể mở thư mục Tải xuống');
+              }
+            }}>
+              Mở thư mục tải
             </Button>
           </Space>
         </div>

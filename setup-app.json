@@ -84,6 +84,87 @@
       "description": "Công cụ hỗ trợ code Github Desktop.",
       "icon": "https://github.com/fluidicon.png",
       "url": "https://desktop.githubusercontent.com/releases/3.5.2-14087268/GitHubDesktopSetup-x64.exe"
+    },
+    {
+      "name": "WinRAR",
+      "version": "7.13",
+      "category": "utility",
+      "description": "Phần mềm nén và giải nén tập tin mạnh mẽ.",
+      "icon": "https://www.win-rar.com/uploads/pics/rar-archive_48.png",
+      "url": "https://www.win-rar.com/fileadmin/winrar-versions/winrar/winrar-x64-713.exe"
+    },
+    {
+      "name": "7-Zip",
+      "version": "25.01",
+      "category": "utility",
+      "description": "Công cụ nén/giải nén tập tin mã nguồn mở, hỗ trợ nhiều định dạng.",
+      "icon": "https://www.7-zip.org/7ziplogo.png",
+      "url": "https://www.7-zip.org/a/7z2501-x64.exe"
+    },
+    {
+      "name": "Adobe Photoshop 2023",
+      "version": "24.1.0.166",
+      "category": "utility",
+      "description": "Công cụ hỗ trợ chỉnh sửa ảnh Photoshop.",
+      "icon": "https://www.adobe.com/cc-shared/assets/img/product-icons/svg/photoshop-40.svg",
+      "url": "https://2movn.com/data/Adobe_Photoshop_2023_v24.1.0.166_x64_Multilingual.zip"
+    },
+    {
+      "name": "Office 2016",
+      "version": "16.0.12328.20180",
+      "category": "utility",
+      "description": "Công cụ hỗ trợ chỉnh sửa văn bản Office.",
+      "icon": "https://www.clipartmax.com/png/middle/14-147935_office-365-for-student-microsoft-office-2016-icon.png",
+      "url": "https://2movn.com/data/Office_2016.exe"
+    },
+    {
+      "name": "WinSCP",
+      "version": "6.5.3",
+      "category": "utility",
+      "description": "Công cụ hỗ trợ chỉnh sửa văn bản WinSCP.",
+      "icon": "https://winscp.net/favicon.ico",
+      "url": "https://2movn.com/data/WinSCP-6.5.3-Portable.zip"
+    },
+    {
+      "name": "Cmder",
+      "version": "1.3.25",
+      "category": "utility",
+      "description": "Công cụ hỗ trợ cấu hình terminal.",
+      "icon": "https://cmder.app/favicon.ico",
+      "url": "https://github.com/cmderdev/cmder/releases/download/v1.3.25/cmder.zip"
+    },
+    {
+      "name": "Git",
+      "version": "1.2.2",
+      "category": "editor",
+      "description": "Công cụ cài đặt nhiều version NodeJS.",
+      "icon": "https://sc372.github.io/2017/05/18/node-nvm/node.png",
+      "url": "https://github.com/coreybutler/nvm-windows/releases/download/1.2.2/nvm-setup.exe"
+    },
+    {
+      "name": "Python",
+      "version": "3.10.11",
+      "category": "editor",
+      "description": "Công cụ Viết code Python 3.10.",
+      "icon": "https://www.python.org/static/apple-touch-icon-144x144-precomposed.png",
+      "url": "https://www.python.org/ftp/python/3.10.11/python-3.10.11-amd64.exe"
+    }
+    ,
+    {
+      "name": "Python 3.13",
+      "version": "3.13.6",
+      "category": "editor",
+      "description": "Công cụ Viết code Python 3.13.",
+      "icon": "https://www.python.org/static/apple-touch-icon-144x144-precomposed.png",
+      "url": "https://www.python.org/ftp/python/3.13.6/python-3.13.6-amd64.exe"
+    },
+    {
+      "name": "PyCharm 2025.2",
+      "version": "2025.2",
+      "category": "editor",
+      "description": "Công cụ Viết code PyCharm.",
+      "icon": "https://www.jetbrains.com/apple-touch-icon.png",
+      "url": "https://download.jetbrains.com/python/pycharm-2025.2.exe"
     }
   ]
 }

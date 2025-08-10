@@ -720,6 +720,21 @@ class MainApp {
       }
       return await doDownload(urlStr);
     });
+
+    // Open Downloads folder in Explorer
+    ipcMain.handle('open-downloads-folder', async () => {
+      try {
+        const downloadsDir = app.getPath('downloads');
+        const result = await shell.openPath(downloadsDir);
+        if (result) {
+          // Electron returns non-empty string when error occurs
+          return { success: false, message: result };
+        }
+        return { success: true, path: downloadsDir };
+      } catch (error: any) {
+        return { success: false, message: error?.message || 'Không thể mở thư mục Tải xuống' };
+      }
+    });
   }
 
   private setupAppEvents(): void {
