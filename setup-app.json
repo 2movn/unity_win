@@ -165,6 +165,94 @@
       "description": "Công cụ Viết code PyCharm.",
       "icon": "https://www.jetbrains.com/apple-touch-icon.png",
       "url": "https://download.jetbrains.com/python/pycharm-2025.2.exe"
+    },
+    {
+      "name": "rufus 4.9",
+      "version": "4.9",
+      "category": "utility",
+      "description": "Công cụ tạo USB cứu hộ.",
+      "icon": "https://rufus.ie/pics/rufus-256.png",
+      "url": "https://github.com/pbatard/rufus/releases/download/v4.9/rufus-4.9p.exe"
+    },
+    {
+      "name": "UltraISO 9.71",
+      "version": "9.71",
+      "category": "utility",
+      "description": "Công cụ tạo chỉnh sửa file ISO.",
+      "icon": "https://images.sftcdn.net/images/t_app-icon-s/p/73f3ed9c-96d0-11e6-806c-00163ec9f5fa/2005201428/ultraiso-logo.png",
+      "url": "https://2movn.com/data/UltraISO.zip"
+    },
+    {
+      "name": "WinNTSetup 5.41",
+      "version": "5.41",
+      "category": "utility",
+      "description": "Công cụ hỗ trợ cài windows từ win vào ổ cứng.",
+      "icon": "https://img.utdstc.com/icon/677/576/677576637c9a3794991262647a3c70f29e54808f14d68bfa78ce2e897040d5df:200",
+      "url": "https://2movn.com/data/WinNTSetup_v541_x64.rar"
+    },
+    {
+      "name": "C++ 2008",
+      "version": "2008",
+      "category": "utility",
+      "description": "Công cụ hỗ trợ cài C++ 2008.",
+      "icon": "https://e7.pngegg.com/pngimages/46/626/png-clipart-c-logo-the-c-programming-language-computer-icons-computer-programming-source-code-programming-miscellaneous-template-thumbnail.png",
+      "url": "https://2movn.com/data/C_2008credist_x64.exe"
+    },
+    {
+      "name": "C++ 2010",
+      "version": "2010",
+      "category": "utility",
+      "description": "Công cụ hỗ trợ cài C++ 2010.",
+      "icon": "https://e7.pngegg.com/pngimages/46/626/png-clipart-c-logo-the-c-programming-language-computer-icons-computer-programming-source-code-programming-miscellaneous-template-thumbnail.png",
+      "url": "https://2movn.com/data/C_2010credist.zip"
+    },
+    {
+      "name": "C++ 2013",
+      "version": "2013",
+      "category": "utility",
+      "description": "Công cụ hỗ trợ cài C++ 2013.",
+      "icon": "https://e7.pngegg.com/pngimages/46/626/png-clipart-c-logo-the-c-programming-language-computer-icons-computer-programming-source-code-programming-miscellaneous-template-thumbnail.png",
+      "url": "https://2movn.com/data/C_2013credist_x64.exe"
+    },
+    {
+      "name": "C++ 2015",
+      "version": "2015",
+      "category": "utility",
+      "description": "Công cụ hỗ trợ cài C++ 2015.",
+      "icon": "https://e7.pngegg.com/pngimages/46/626/png-clipart-c-logo-the-c-programming-language-computer-icons-computer-programming-source-code-programming-miscellaneous-template-thumbnail.png",
+      "url": "https://2movn.com/data/C_2015credist_x64.exe"
+    },
+    {
+      "name": "PartitionWizard 10.0",
+      "version": "10.0",
+      "category": "utility",
+      "description": "Công cụ hỗ trợ chia ổ cứng",
+      "icon": "https://media.imgcdn.org/repo/2023/03/minitool-partition-wizard-pro/minitool-partition-wizard-pro-logo.png",
+      "url": "https://2movn.com/data/PartitionWizard10.exe"
+    },
+    {
+      "name": "Winbox",
+      "version": "3.42",
+      "category": "remote",
+      "description": "Công cụ hỗ trợ quản lý router MikroTik",
+      "icon": "https://mikrotik.com/img/mtv2/safari-pinned-tab.svg",
+      "url": "https://download.mikrotik.com/routeros/winbox/3.42/winbox64.exe"
+    },
+    {
+      "name": "Remote Desktop Connection Manager v3.1",
+      "version": "3.1",
+      "category": "remote",
+      "description": "Công cụ hỗ trợ quản lý Remote Desktop Connection",
+      "icon": "https://www.anyviewer.com/screenshot/others/illustration/remote-desktop-connection-manager.png",
+      "url": "https://download.sysinternals.com/files/RDCMan.zip"
+    },
+    {
+      "name": "XPipe",
+      "version": "17.4",
+      "category": "remote",
+      "description": "Công cụ hỗ trợ quản lý Remote Server SSH trực quan",
+      "icon": "https://xpipe.io/apple-touch-icon.png",
+      "url": "https://github.com/xpipe-io/xpipe/releases/latest/download/xpipe-portable-windows-x86_64.zip"
     }
   ]
 }
