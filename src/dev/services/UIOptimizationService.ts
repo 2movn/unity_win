@@ -438,6 +438,17 @@ export class UIOptimizationService {
           $settings['taskbar_small_icons'] = $false
           $settings['taskbar_show_labels'] = $true 
         }
+
+        # Win11: Taskbar alignment (TaskbarAl). Yêu cầu: bật = căn trái, tắt = căn giữa
+        try {
+          $taskbarAl = Get-ItemProperty -Path "HKCU:\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced" -Name "TaskbarAl" -ErrorAction SilentlyContinue
+          if ($taskbarAl -and $null -ne $taskbarAl.TaskbarAl) {
+            # left when 0, center when 1
+            $settings['taskbar_center_icons'] = if ($taskbarAl.TaskbarAl -eq 0) { $true } else { $false }
+          } else {
+            $settings['taskbar_center_icons'] = $false
+          }
+        } catch { $settings['taskbar_center_icons'] = $false }
         
         # Basic explorer settings
         try {
@@ -702,6 +713,7 @@ export class UIOptimizationService {
       taskbar_small_icons: false,
       taskbar_show_labels: true,
       taskbar_show_desktop: true,
+      taskbar_center_icons: false,
       
       // Explorer defaults (based on actual system state)
       explorer_show_extensions: true,
@@ -1168,9 +1180,9 @@ export class UIOptimizationService {
 
   private async setAppearanceCustomCursor(enabled: boolean): Promise<void> {
     if (enabled) {
-      await executeCmdCommand('reg add "HKCU\\Control Panel\\Cursors" /v Scheme Source /t REG_DWORD /d 1 /f');
+      await executeCmdCommand('reg add "HKCU\\Control Panel\\Cursors" /v "Scheme Source" /t REG_DWORD /d 1 /f');
     } else {
-      await executeCmdCommand('reg add "HKCU\\Control Panel\\Cursors" /v Scheme Source /t REG_DWORD /d 0 /f');
+      await executeCmdCommand('reg add "HKCU\\Control Panel\\Cursors" /v "Scheme Source" /t REG_DWORD /d 0 /f');
     }
   }
 

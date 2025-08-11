@@ -331,14 +331,21 @@ export class WindowsOptimizationService {
 
   private async setTaskbarCenterIcons(enabled: boolean): Promise<{ success: boolean; message: string }> {
     try {
-      if (enabled) {
-        await executeCmdCommand(`reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced" /v TaskbarAl /t REG_DWORD /d 1 /f`);
-      }
-      return { success: true, message: `Đã ${enabled ? 'bật' : 'tắt'} căn giữa icon taskbar` };
+      // Yêu cầu mới: Bật = căn trái, Tắt = căn giữa
+      // Windows 11: TaskbarAl = 0 (left), 1 (center)
+      const value = enabled ? 0 : 1;
+      await executeCmdCommand(`reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced" /v TaskbarAl /t REG_DWORD /d ${value} /f`);
+      // Khởi động lại Explorer để áp dụng ngay
+      
+      try {
+        await executePowerShellScript('Stop-Process -Name explorer -Force -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 600; Start-Process explorer.exe');
+      } catch {}
+      return { success: true, message: `Đã ${enabled ? 'căn trái' : 'căn giữa'} icon taskbar` };
     } catch (error) {
       return { success: false, message: `Lỗi: ${error instanceof Error ? error.message : 'Unknown error'}` };
     }
   }
+
 
   // Explorer optimizations
   private async setExplorerShowExtensions(enabled: boolean): Promise<{ success: boolean; message: string }> {
@@ -890,17 +897,37 @@ export class WindowsOptimizationService {
 
   async moveZaloToDrive(drive: string): Promise<{ success: boolean; message: string }> {
     try {
+      const normalizedDrive = /^[A-Za-z]:\\$/.test(drive) ? drive : (/^[A-Za-z]:$/.test(drive) ? drive + '\\' : drive);
       const zaloPath = path.join(os.homedir(), 'AppData', 'Local', 'ZaloPC');
-      const targetPath = path.join(drive, 'ZaloPC');
+      const targetPath = path.join(normalizedDrive, 'ZaloPC');
       
-      if (await fs.pathExists(zaloPath)) {
-        await fs.copy(zaloPath, targetPath);
-        await fs.remove(zaloPath);
-        await fs.symlink(targetPath, zaloPath);
-        return { success: true, message: `Đã di chuyển Zalo sang ổ ${drive}` };
-      } else {
+      if (!await fs.pathExists(zaloPath)) {
         return { success: false, message: 'Không tìm thấy thư mục Zalo' };
       }
+
+      // Kill Zalo nếu đang chạy để tránh file lock
+      try {
+        await executePowerShellScript('Get-Process -Name "Zalo*" -ErrorAction SilentlyContinue | Stop-Process -Force');
+      } catch {}
+
+      // Tạo thư mục đích và copy dữ liệu
+      await fs.ensureDir(targetPath);
+      await fs.copy(zaloPath, targetPath);
+
+      // Đổi tên thư mục gốc thành backup rồi tạo symlink junction để tránh yêu cầu admin
+      const backupPath = path.join(os.homedir(), 'AppData', 'Local', `ZaloPC_backup_${Date.now()}`);
+      await fs.move(zaloPath, backupPath);
+
+      try {
+        // Tạo junction (dir symlink) bằng mklink /J để không cần quyền admin
+        const cmd = `cmd /c mklink /J "${zaloPath}" "${targetPath}"`;
+        await executeCmdCommand(cmd);
+      } catch (e) {
+        // Fallback: thử tạo symlink chuẩn (có thể cần quyền admin)
+        await fs.symlink(targetPath, zaloPath, 'junction');
+      }
+
+      return { success: true, message: `Đã di chuyển Zalo sang ${normalizedDrive}. Backup tại: ${backupPath}` };
     } catch (error) {
       return { success: false, message: `Lỗi: ${error instanceof Error ? error.message : 'Unknown error'}` };
     }
@@ -1033,58 +1060,81 @@ export class WindowsOptimizationService {
 
   async getServicesInfo(): Promise<any[]> {
     try {
-      const { stdout } = await executeCmdCommand('sc query type= service state= all');
-      
-      // Parse the output and convert to array of service objects
-      const lines = stdout.split('\n');
-      const services: any[] = [];
-      let currentService: any = {};
-      
-      for (const line of lines) {
-        const trimmedLine = line.trim();
-        
-        if (trimmedLine.startsWith('SERVICE_NAME:')) {
-          if (currentService.Name) {
-            services.push(currentService);
-          }
-          currentService = {
-            Name: trimmedLine.replace('SERVICE_NAME:', '').trim(),
-            SafeToDisable: false, // Default value
-            Category: 'System',
-            Impact: 'Trung bình',
-            StartType: 3 // Default to Manual
-          };
-        } else if (trimmedLine.startsWith('DISPLAY_NAME:')) {
-          currentService.DisplayName = trimmedLine.replace('DISPLAY_NAME:', '').trim();
-          // Use DisplayName as Description if no specific description is available
-          if (!currentService.Description) {
-            currentService.Description = currentService.DisplayName;
-          }
-        } else if (trimmedLine.startsWith('TYPE:')) {
-          // Parse service type
-        } else if (trimmedLine.startsWith('STATE:')) {
-          const stateMatch = trimmedLine.match(/STATE\s+:\s+(\d+)/);
-          if (stateMatch) {
-            currentService.Status = parseInt(stateMatch[1]);
-          }
-        } else if (trimmedLine.startsWith('WIN32_EXIT_CODE:')) {
-          // Parse exit code
-        } else if (trimmedLine.startsWith('SERVICE_EXIT_CODE:')) {
-          // Parse service exit code
-        } else if (trimmedLine.startsWith('CHECKPOINT:')) {
-          // Parse checkpoint
-        } else if (trimmedLine.startsWith('WAIT_HINT:')) {
-          // Parse wait hint
-        } else if (trimmedLine.startsWith('PID:')) {
-          // Parse process ID
-        } else if (trimmedLine.startsWith('FLAGS:')) {
-          // Parse flags
+      // Ưu tiên lấy trạng thái qua PowerShell (ổn định trên Windows mọi ngôn ngữ)
+      const psScript = `
+        try {
+          Get-CimInstance -ClassName Win32_Service | Select-Object Name, DisplayName, State, StartMode | ConvertTo-Json -Depth 2
+        } catch {
+          # Fallback rỗng
+          Write-Output '[]'
         }
+      `;
+      const { stdout: psOut } = await executePowerShellScript(psScript);
+      let services: any[] = [];
+      try {
+        const parsed = JSON.parse(psOut || '[]');
+        const list = Array.isArray(parsed) ? parsed : (parsed ? [parsed] : []);
+        services = list.map((s: any) => {
+          const stateStr = (s.State || '').toString();
+          const startModeStr = (s.StartMode || '').toString();
+          const stateMap: Record<string, number> = {
+            'Stopped': 1,
+            'Start Pending': 2,
+            'Stop Pending': 3,
+            'Running': 4,
+            'Continue Pending': 5,
+            'Pause Pending': 6,
+            'Paused': 7
+          };
+          const startTypeMap: Record<string, number> = {
+            'Boot': 0,
+            'System': 1,
+            'Auto': 2,
+            'Automatic': 2,
+            'Auto (Delayed Start)': 2,
+            'Manual': 3,
+            'Disabled': 4
+          };
+          return {
+            Name: s.Name || '',
+            DisplayName: s.DisplayName || s.Name || '',
+            Description: s.DisplayName || s.Name || '',
+            Status: stateMap[stateStr] ?? 0,
+            StartType: startTypeMap[startModeStr] ?? 3,
+            SafeToDisable: false,
+            Category: 'System',
+            Impact: 'Trung bình'
+          };
+        });
+      } catch {
+        services = [];
       }
-      
-      // Add the last service
-      if (currentService.Name) {
-        services.push(currentService);
+
+      // Fallback: nếu PowerShell không trả được gì, dùng sc query (có thể bị localize)
+      if (services.length === 0) {
+        const { stdout } = await executeCmdCommand('sc query type= service state= all');
+        const lines = stdout.split('\n');
+        let currentService: any = {};
+        for (const rawLine of lines) {
+          const line = rawLine.trim();
+          if (line.startsWith('SERVICE_NAME:')) {
+            if (currentService.Name) services.push(currentService);
+            currentService = {
+              Name: line.replace('SERVICE_NAME:', '').trim(),
+              SafeToDisable: false,
+              Category: 'System',
+              Impact: 'Trung bình',
+              StartType: 3
+            };
+          } else if (line.startsWith('DISPLAY_NAME:')) {
+            currentService.DisplayName = line.replace('DISPLAY_NAME:', '').trim();
+            if (!currentService.Description) currentService.Description = currentService.DisplayName;
+          } else if (line.startsWith('STATE')) {
+            const stateMatch = line.match(/STATE\s+:\s+(\d+)/);
+            if (stateMatch) currentService.Status = parseInt(stateMatch[1]);
+          }
+        }
+        if (currentService.Name) services.push(currentService);
       }
       
       // Ánh xạ tiếng Việt từ defaultServicesData (bao phủ đầy đủ)
@@ -1111,17 +1161,14 @@ export class WindowsOptimizationService {
         }
       });
       
-      // Get start type for each service
+      // Bổ sung StartType nếu còn thiếu bằng sc qc (fallback)
       for (const service of services) {
-        try {
-          const { stdout } = await executeCmdCommand(`sc qc "${service.Name}"`);
-          const startTypeMatch = stdout.match(/START_TYPE\s+:\s+(\d+)/);
-          if (startTypeMatch) {
-            service.StartType = parseInt(startTypeMatch[1]);
-          }
-        } catch (error) {
-          // Keep default StartType if can't get it
-          console.error(`Không thể lấy StartType cho service ${service.Name}:`, error);
+        if (service.StartType === undefined || service.StartType === null) {
+          try {
+            const { stdout } = await executeCmdCommand(`sc qc "${service.Name}"`);
+            const match = stdout.match(/START_TYPE\s+:\s+(\d+)/);
+            if (match) service.StartType = parseInt(match[1]);
+          } catch {}
         }
       }
       

@@ -15,8 +15,22 @@ const ZaloManager: React.FC = () => {
       try {
         const res = await window.electronAPI.getAvailableDrives();
         if (Array.isArray(res) && res.length > 0) {
-          setDrives(res);
-          setSelectedDrive(res[0]);
+          // Chuẩn hóa: chấp nhận mảng string hoặc mảng object { drive: 'D:' }
+          const letters = res
+            .map((item: any) => {
+              if (typeof item === 'string') return item;
+              if (item && typeof item === 'object') return item.drive || item.DeviceID || item.letter || '';
+              return '';
+            })
+            .filter((d: string) => !!d)
+            .map((d: string) => {
+              // Thêm \\ nếu thiếu để thành dạng D:\
+              if (/^[A-Za-z]:\\$/.test(d)) return d;
+              if (/^[A-Za-z]:$/.test(d)) return d + '\\';
+              return d;
+            });
+          setDrives(letters);
+          setSelectedDrive(letters[0]);
         } else {
           setDrives([]);
         }

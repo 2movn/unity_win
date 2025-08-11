@@ -382,14 +382,21 @@ const WindowsOptimization: React.FC = () => {
   // Helper functions
   const getServiceStatus = (status: number) => {
     switch (status) {
-      case 4: return 'Running';
       case 1: return 'Stopped';
+      case 2: return 'Start pending';
+      case 3: return 'Stop pending';
+      case 4: return 'Running';
+      case 5: return 'Continue pending';
+      case 6: return 'Pause pending';
+      case 7: return 'Paused';
       default: return 'Unknown';
     }
   };
 
   const getServiceStartType = (startType: number) => {
     switch (startType) {
+      case 0: return 'Boot';
+      case 1: return 'System';
       case 2: return 'Automatic';
       case 3: return 'Manual';
       case 4: return 'Disabled';

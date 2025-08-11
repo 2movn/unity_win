@@ -186,7 +186,7 @@ const App: React.FC = () => {
             fontSize: 18
           }}>
             <AppstoreOutlined style={{ fontSize: '24px', color: '#3b82f6' }} />
-            {!collapsed && <span>System Manager</span>}
+            {!collapsed && <span>System Manager 1.0.1</span>}
           </div>
         </div>
         <Menu

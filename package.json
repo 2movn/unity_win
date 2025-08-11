@@ -1,6 +1,6 @@
 {
   "name": "windows-system-manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Ứng dụng quản lý hệ thống Windows với giao diện chuyên nghiệp",
   "main": "build/main.js",
   "scripts": {
