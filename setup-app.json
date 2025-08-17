@@ -38,7 +38,7 @@
       "category": "browser",
       "description": "Công cụ hỗ trợ duyệt web Firefox.",
       "icon": "https://www.firefox.com/media/img/favicons/firefox/browser/favicon-196x196.59e3822720be.png",
-      "url": "https://cdn.stubdownloader.services.mozilla.com/builds/firefox-stub/vi/win/941e3a4e49eb867acfaa1134e0d8fcf2d8ccf0ad94e920119fb19ab07270d5a9/Firefox%20Installer.exe"
+      "url": "https://cdn.stubdownloader.services.mozilla.com/builds/firefox-beta-latest-ssl/ar/win/ceabef0b05ecc253fa022887fc8972b47fce5a8454ac547a40408b8d4de60518/Firefox%20Setup%20142.0b9.exe"
     },
     {
       "name": "Edge",
