@@ -253,6 +253,22 @@
       "description": "Công cụ hỗ trợ quản lý Remote Server SSH trực quan",
       "icon": "https://xpipe.io/apple-touch-icon.png",
       "url": "https://github.com/xpipe-io/xpipe/releases/latest/download/xpipe-portable-windows-x86_64.zip"
+    },
+    {
+      "name": "CloakBox",
+      "version": "1.0.0",
+      "category": "appliance",
+      "description": "Công cụ Tạo máy ảo bypass VM detection",
+      "icon": "https://www.virtualbox.org/favicon.ico",
+      "url": "https://2movn.com/data/CloakBox.zip"
+    },
+    {
+      "name": "LDplayer NoADS China",
+      "version": "11.2.1.1",
+      "category": "appliance",
+      "description": "Công cụ chạy game Android không quảng cáo",
+      "icon": "https://res.ldrescdn.com/gw/static/ld_gw/assets/favicon.ico",
+      "url": "https://2movn.com/data/LdPlayer-NoADs-china.zip"
     }
   ]
 }
